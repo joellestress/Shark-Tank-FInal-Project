@@ -20,6 +20,10 @@ function draw() {
     case 0: //drowning
       background(0, 150, 255); // Blue background for water
 
+  if (mouseIsPressed) {
+        stage = 1; // Switch to stage 1
+      }
+
       // Character movement
       character.vel.y += 0.1; // Gravity pulls character down
       if (character.y > height - 25) { // Keep character within canvas boundaries
@@ -52,10 +56,6 @@ function draw() {
 			character.position.y += 5;
         }
       }
-
-	  if (mouse.presses()) {
-		stage = 1;
-    }
 
       break;
       
