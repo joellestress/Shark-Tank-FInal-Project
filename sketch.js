@@ -20,10 +20,6 @@ function draw() {
     case 0: //drowning
       background(0, 150, 255); // Blue background for water
 
-  if (mouseIsPressed) {
-        stage = 1; // Switch to stage 1
-      }
-
       // Character movement
       character.vel.y += 0.1; // Gravity pulls character down
       if (character.y > height - 25) { // Keep character within canvas boundaries
@@ -56,12 +52,15 @@ function draw() {
 			character.position.y += 5;
         }
       }
-
-      break;
+    if (mouseIsPressed) {
+        stage = 1; // Switch to stage 1
+        console.log("Transitioning to stage 1"); // Log the transition
+    }
+    break;
       
     case 1:
       // Falling stage logic
-	  backround("white");
+	  background(255);
       break;
       
     case 2:
