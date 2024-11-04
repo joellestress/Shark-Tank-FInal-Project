@@ -3,6 +3,16 @@ let character;
 let enemies = [];
 let enemySpeed = 2;
 let spawnRate = 60;  // How often enemies spawn (frames)
+let player2;
+let branches;
+let branchImage;
+let grasped = false;
+let tree;
+
+function preload() {
+  branchImage = loadImage('assets/branch.png');
+  tree = loadImage('assets/tree.jpg');
+}
 
 function setup() {
   new Canvas(1280, 720);
@@ -13,6 +23,13 @@ function setup() {
   character.color = color(255, 0, 0);
   character.vel.y = -2; // Initial sinking speed
   character.friction = 0.5; // Water resistance
+
+  //player2 = new Sprite(200, 100, 50, 50, 'dynamic');
+  //branches = new Group();
+  //for (let i = 0; i < 10; i++) {
+   // let branch = new Sprite(random(width), i * 100, 100, 20, 'static');
+   // branches.add(branch);
+  //}
 }
 
 function draw() {
@@ -60,7 +77,36 @@ function draw() {
       
     case 1:
       // Falling stage logic
-	  background(255);
+	  background(tree);
+
+       // Initialize player2 and branches if they haven't been created yet
+       if (!player2) {
+        // Create player2 sprite with initial fall speed
+        player2 = new Sprite(200, 100, 50, 50, 'dynamic');
+        player2.vel.y = 5;
+
+        // Create branches as a group
+        branches = new Group();
+        for (let i = 0; i < 10; i++) {
+          let branch = new Sprite(random(width), i * 100, 100, 20, 'static');
+          branch.img = branchImage; // Set the image for the branch sprite
+          branches.add(branch);
+        }
+      }
+
+      player2.visible = true;
+      branches.visible = true;
+
+      player2.collides(branches, (branch) => {
+        if (!grasped) {
+          player2.vel.y = 0;
+          grasped = true;
+          setTimeout(() => {
+            player2.vel.y = 5;
+            grasped = false;
+          }, 1000);
+        }
+      });
       break;
       
     case 2:
