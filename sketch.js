@@ -23,13 +23,6 @@ function setup() {
   character.color = color(255, 0, 0);
   character.vel.y = -2; // Initial sinking speed
   character.friction = 0.5; // Water resistance
-
-  //player2 = new Sprite(200, 100, 50, 50, 'dynamic');
-  //branches = new Group();
-  //for (let i = 0; i < 10; i++) {
-   // let branch = new Sprite(random(width), i * 100, 100, 20, 'static');
-   // branches.add(branch);
-  //}
 }
 
 function draw() {
@@ -96,6 +89,10 @@ function draw() {
 
       player2.visible = true;
       branches.visible = true;
+
+      //keyboard controls
+      if(kb.pressing('left')) player2.vel.x = -2;
+      else if (kb.pressing('right')) player2.vel.x =2;
 
       player2.collides(branches, (branch) => {
         if (!grasped) {
