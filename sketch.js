@@ -11,10 +11,12 @@ let tree;
 let nextBranchY; // Track position of new branches 
 let fall = 0.05; 
 let startTime;
+let stick;
 
 function preload() {
   branchImage = loadImage('assets/branch.png');
   tree = loadImage('assets/tree.jpg');
+  stick = loadImage('assets/stick.png');
 }
 
 function setup() {
@@ -119,8 +121,19 @@ function draw() {
       break;
 
     case 2:
+      for (let i = branches.length - 1; i >= 0; i--) {
+        branches[i].remove(); // Remove sprite from group
+      }
+    
+      console.log("Branches removed");
       background(255);
-      // Poison bugs stage logic
+
+      let stickWidth = stick.width * 2;  // Double the width
+      let stickHeight = stick.height * 2; // Double the height
+    
+      // Display the scaled stick image in the center
+      image(stick, width / 2 - stickWidth / 2, height / 2 - stickHeight / 2, stickWidth, stickHeight);
+      
       break;
 
     case 3:
