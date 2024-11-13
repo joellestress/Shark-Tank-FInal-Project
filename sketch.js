@@ -10,6 +10,7 @@ let grasped = false;
 let tree;
 let nextBranchY; // Track position of new branches 
 let fall = 0.05; 
+let startTime;
 
 function preload() {
   branchImage = loadImage('assets/branch.png');
@@ -56,6 +57,7 @@ function draw() {
       }
       if (mouseIsPressed) {
         stage = 1;
+        startTime = millis();
         console.log("Transitioning to stage 1");
       }
       break;
@@ -110,6 +112,10 @@ function draw() {
       }
 
       camera.y = player2.y;
+
+      if (millis() - startTime > 30000) {
+        stage = 2;
+      }
       break;
 
     case 2:
