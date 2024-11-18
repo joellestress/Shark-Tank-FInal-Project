@@ -146,6 +146,14 @@ function draw() {
       clear();
       player.moveTowards(mouse);
 
+      for (let gem of gems) {
+        let direction = createVector(width / 2 - gem.x, height / 2 - gem.y);
+        direction.normalize(); // Get unit vector for direction
+        gem.vel.x = direction.x * 0.5; // Adjust speed towards the center
+        gem.vel.y = direction.y * 0.5;
+      }
+    
+
       if (frameCount % 60 === 0) { // Every second
         let newGem = new Sprite(random(0, width), random(0, height), 10, 'dynamic');
         gems.add(newGem);
