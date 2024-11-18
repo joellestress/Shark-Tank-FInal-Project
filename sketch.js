@@ -12,6 +12,8 @@ let nextBranchY; // Track position of new branches
 let fall = 0.05; 
 let startTime;
 let stick;
+let player;
+let gems;
 
 function preload() {
   branchImage = loadImage('assets/branch.png');
@@ -115,7 +117,7 @@ function draw() {
 
       camera.y = player2.y;
 
-      if (millis() - startTime > 30000) {
+      if (millis() - startTime > 10000) {
         stage = 2;
       }
       break;
@@ -126,14 +128,26 @@ function draw() {
       }
     
       console.log("Branches removed");
-      background(255);
 
-      let stickWidth = stick.width * 2;  // Double the width
-      let stickHeight = stick.height * 2; // Double the height
-    
-      // Display the scaled stick image in the center
-      image(stick, width / 2 - stickWidth / 2, height / 2 - stickHeight / 2, stickWidth, stickHeight);
-      
+      if (!gems) {
+        new Canvas(1280, 720);
+
+        // Initialize gems and player
+        gems = new Group();
+        gems.diameter = 10;
+        gems.x = () => random(0, canvas.w);
+        gems.y = () => random(0, canvas.h);
+        gems.amount = 80;
+
+        player = new Sprite();
+      }
+
+      // Clear and move player towards mouse
+      clear();
+      player.moveTowards(mouse);
+
+      // Handle gem collection
+      player.overlaps(gems, collect);
       break;
 
     case 3:
@@ -150,6 +164,10 @@ function spawnBranch() {
   let branch = new Sprite(random(width), player2.y + height / 2, 100, 20, 'static');
   branch.img = branchImage;
   branches.add(branch);
+}
+
+function collect(player, gem) {
+  gem.remove(); // Remove gem upon collection.
 }
 
 function spawnEnemy() {
