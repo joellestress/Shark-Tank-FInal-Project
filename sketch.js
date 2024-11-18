@@ -134,7 +134,7 @@ function draw() {
 
         // Initialize gems and player
         gems = new Group();
-        gems.diameter = 10;
+        gems.diameter = 30;
         gems.x = () => random(0, canvas.w);
         gems.y = () => random(0, canvas.h);
         gems.amount = 80;
@@ -146,8 +146,14 @@ function draw() {
       clear();
       player.moveTowards(mouse);
 
+      if (frameCount % 60 === 0) { // Every second
+        let newGem = new Sprite(random(0, width), random(0, height), 10, 'dynamic');
+        gems.add(newGem);
+      }
+
       // Handle gem collection
       player.overlaps(gems, collect);
+    
       break;
 
     case 3:
