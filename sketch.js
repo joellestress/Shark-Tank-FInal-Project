@@ -14,11 +14,14 @@ let startTime;
 let stick;
 let player;
 let gems;
+let sharkAni;
 
 function preload() {
   branchImage = loadImage('assets/branch.png');
   tree = loadImage('assets/tree.jpg');
   stick = loadImage('assets/stick.png');
+  sharkAni = loadAnimation('assets/shark_0001.png', 'assets/shark_0025.png'); 
+  console.log("shark animation loaded:", sharkAni);
 }
 
 function setup() {
@@ -30,6 +33,33 @@ function setup() {
   character.color = color(255, 0, 0);
   character.vel.y = -2;
   character.friction = 0.5;
+}
+
+function spawnEnemy() {
+  console.log("spawnEnemy function called");
+  let edge = floor(random(4));
+  let x, y;
+
+  if (edge === 0) {  // Top
+    x = random(width);
+    y = 0;
+  } else if (edge === 1) {  // Bottom
+    x = random(width);
+    y = height;
+  } else if (edge === 2) {  // Left
+    x = 0;
+    y = random(height);
+  } else {  // Right
+    x = width;
+    y = random(height);
+  }
+
+  // Create an enemy sprite and assign the shark animation
+  let enemy = new Sprite(x, y, 50, 50); // Adjust size for your shark
+  enemy.addAnimation('shark', sharkAni);
+  enemy.changeAnimation('shark');
+  enemies.push(enemy);
+  console.log("Shark animation assigned:", enemy.animation);
 }
 
 function draw() {
@@ -139,7 +169,7 @@ function draw() {
         gems.y = () => random(0, canvas.h);
         gems.amount = 80;
 
-        player = new Sprite();
+        player = new Sprite() ;
       }
 
       // Clear and move player towards mouse
@@ -155,7 +185,7 @@ function draw() {
     
 
       if (frameCount % 60 === 0) { // Every second
-        let newGem = new Sprite(random(0, width), random(0, height), 10, 'dynamic');
+        let newGem = new Sprite(random(0, width), random(0, height), 30, 'dynamic');
         gems.add(newGem);
       }
 
@@ -182,27 +212,4 @@ function spawnBranch() {
 
 function collect(player, gem) {
   gem.remove(); // Remove gem upon collection.
-}
-
-function spawnEnemy() {
-  let edge = floor(random(4));
-  let x, y;
-
-  if (edge === 0) {  // Top
-    x = random(width);
-    y = 0;
-  } else if (edge === 1) {  // Bottom
-    x = random(width);
-    y = height;
-  } else if (edge === 2) {  // Left
-    x = 0;
-    y = random(height);
-  } else {  // Right
-    x = width;
-    y = random(height);
-  }
-
-  let enemy = new Sprite(x, y, 30, 30);
-  enemy.color = color(255, 0, 0);
-  enemies.push(enemy);
 }
