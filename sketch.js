@@ -15,13 +15,21 @@ let stick;
 let player;
 let gems;
 let sharkAni;
+let waterSound;
+let ocean;
+let fallSound;
+let collided = false; // Variable to track collision state
+let bug;
 
 function preload() {
   branchImage = loadImage('assets/branch.png');
   tree = loadImage('assets/tree.jpg');
   stick = loadImage('assets/stick.png');
   sharkAni = loadAnimation('assets/shark_0001.png', 'assets/shark_0025.png'); 
-  console.log("shark animation loaded:", sharkAni);
+  waterSound = loadSound('assets/water.mp3');
+  ocean = loadImage('assets/ocean.jpg');
+  fallSound = loadSound('assets/falling.mp3');
+  bug = loadAnimation('assets/bug_0001.png', 'assets/bug_0013.png');
 }
 
 function setup() {
@@ -65,7 +73,7 @@ function spawnEnemy() {
 function draw() {
   switch (stage) {
     case 0: // Drowning stage
-      background(0, 150, 255);
+      background(ocean);
       character.vel.y += 0.1;
       if (character.y > height - 25) {
         character.y = height - 25;
@@ -74,6 +82,10 @@ function draw() {
       if (kb.pressing('left')) character.vel.x = -2;
       else if (kb.pressing('right')) character.vel.x = 2;
       else character.vel.x = 0;
+
+      if (kb.pressed('left') || kb.pressed('right')) {
+        waterSound.play(); // Play the water sound
+      }
 
       if (kb.pressing('up')) character.vel.y -= 0.12;
       if (frameCount % spawnRate === 0) {
@@ -133,12 +145,18 @@ function draw() {
         if (!grasped) {
           player2.vel.y = 0;
           grasped = true;
+          collided = true; // Update collision state
           setTimeout(() => {
             player2.vel.y = 5;
             grasped = false;
+            collided = false; // Reset collision state after grasping
           }, 1000);
         }
       });
+
+      if (!collided && !fallSound.isPlaying()) { // Check collision and play sound if not playing
+        fallSound.play();
+      }
 
       if (player2.y > nextBranchY) {
         spawnBranch();
@@ -153,54 +171,70 @@ function draw() {
       break;
 
     case 2:
+      background(255);
+
+      // Clear branches group
       for (let i = branches.length - 1; i >= 0; i--) {
-        branches[i].remove(); // Remove sprite from group
+        branches[i].remove();
       }
     
-      console.log("Branches removed");
-
+      // Initialize gems if not already done
       if (!gems) {
-        new Canvas(1280, 720);
-
-        // Initialize gems and player
         gems = new Group();
-        gems.diameter = 30;
-        gems.x = () => random(0, canvas.w);
-        gems.y = () => random(0, canvas.h);
-        gems.amount = 80;
-
-        player = new Sprite() ;
+        for (let i = 0; i < 80; i++) {
+          let gem = new Sprite(random(0, width), random(0, height), 30, 'dynamic');
+          gem.addAnimation('bug', bug);
+          gem.changeAnimation('bug');
+          gems.add(gem);
+        }
+        console.log("Gems initialized:", gems.length);
       }
-
-      // Clear and move player towards mouse
-      clear();
-      player.moveTowards(mouse);
-
+    
+      // Move player towards mouse
+      if (!player) {
+        player = new Sprite(width / 2, height / 2, 50, 50, 'dynamic');
+      }
+      player.vel.x = (mouseX - player.x) * 0.05;
+      player.vel.y = (mouseY - player.y) * 0.05;
+    
+      // Update gems' movement and check for collection
       for (let gem of gems) {
         let direction = createVector(width / 2 - gem.x, height / 2 - gem.y);
-        direction.normalize(); // Get unit vector for direction
-        gem.vel.x = direction.x * 0.5; // Adjust speed towards the center
+        direction.normalize();
+        gem.vel.x = direction.x * 0.5;
         gem.vel.y = direction.y * 0.5;
+    
+        if (dist(mouseX, mouseY, gem.x, gem.y) < gem.width / 2) {
+          gem.remove();
+          console.log("Gem collected");
+        }
       }
     
-
-      if (frameCount % 60 === 0) { // Every second
+      // Spawn new gems periodically
+      if (frameCount % 60 === 0) {
         let newGem = new Sprite(random(0, width), random(0, height), 30, 'dynamic');
+        newGem.addAnimation('bug', bug);
+        newGem.changeAnimation('bug');
         gems.add(newGem);
+        console.log("New gem spawned");
       }
-
-      // Handle gem collection
-      player.overlaps(gems, collect);
     
+      // Draw all gems
+      drawSprites(gems);
+      break;
+    
+    // Define drawSprites function
+    function drawSprites(group) {
+      for (let sprite of group) {
+        sprite.draw();
+      }
+    }
       break;
 
     case 3:
-      // Tornadoes stage logic
+      // closing stage 
       break;
 
-    case 4:
-      // Closing stage logic
-      break;
   }
 }
 
