@@ -20,6 +20,7 @@ let ocean;
 let fallSound;
 let collided = false; // Variable to track collision state
 let bug;
+let bugSound;
 
 function preload() {
   branchImage = loadImage('assets/branch.png');
@@ -30,6 +31,7 @@ function preload() {
   ocean = loadImage('assets/ocean.jpg');
   fallSound = loadSound('assets/falling.mp3');
   bug = loadAnimation('assets/bug_0001.png', 'assets/bug_0013.png');
+  bugSound = loadSound('assets/bugSound.mp3');
 }
 
 function setup() {
@@ -207,6 +209,7 @@ function draw() {
         if (dist(mouseX, mouseY, gem.x, gem.y) < gem.width / 2) {
           gem.remove();
           console.log("Gem collected");
+          bugSound.play();
         }
       }
     
