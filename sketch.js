@@ -23,6 +23,12 @@ let bug;
 let bugSound;
 let sleepButton;
 let openEyes;
+let closeEyesAni;
+let isClosingEyes = false; // Flag to track if the animation is playing
+let openEyesAni;
+let timer = 0;
+let isOpeningEyes = false;
+
 
 function preload() {
   branchImage = loadImage('assets/branch.png');
@@ -35,6 +41,8 @@ function preload() {
   bug = loadAnimation('assets/bug_0001.png', 'assets/bug_0013.png');
   bugSound = loadSound('assets/bugSound.mp3');
   openEyes = loadImage('assets/openeyes.jpg');
+  closeEyesAni = loadAnimation('assets/closingeye_001.png', 'assets/closingeye_014.png');
+  openEyesAni = loadAnimation('assets/openingeye_001.png', 'assets/openingeye_017.png');
 }
 
 function setup() {
@@ -84,17 +92,30 @@ function spawnEnemy() {
 function draw() {
   switch (stage) {
     case 0:
-    if (!startTime) {
-      startTime = millis(); // Set the start time when entering stage 1
-    }
       background(openEyes);
       character.visible = false; // Hide character in stage 0
-      // Check if the mouse is pressed on the button
-      if (button.mouse.pressing()) {
-        stage = 1
+
+      if (isClosingEyes) {
+        scale(width / closeEyesAni.width, height / closeEyesAni.height)
+        animation(closeEyesAni, width / 2, height / 2); // Play the closing eyes animation
+        scale(2);
+        console.log(closeEyesAni);
+        if (millis() - animationStartTime > 1000) { // Assuming the animation duration is 1 second
+          isClosingEyes = false;
+          stage = 1; // Switch to the next stage after the animation finishes
+          startTime = millis(); // Initialize startTime when switching to stage 1
+        }
       } else {
-        button.color = 'blue'; // Reset color
-        button.text = 'Go to Sleep';
+        // Check if the mouse is pressed on the button
+        if (button.mouse.pressing()) {
+          isClosingEyes = true; // Start the closing eyes animation
+          closeEyesAni.play(); // Play the animation
+          animationStartTime = millis(); // Start the animation timer
+        } else {
+          button.color = 'blue'; // Reset color
+          button.text = 'Go to Sleep';
+        }
+        console.log(closeEyesAni);
       }
       break;
     case 1: // Drowning stage
@@ -137,11 +158,12 @@ function draw() {
          for (let enemy of enemies) {
           enemy.visible = false;
         }
-      }
+              }
       break;
 
     case 2: // Falling stage with branches
       background(tree);
+      character.visible = false;
 
       if (!player2) {
         player2 = new Sprite(200, 100, 50, 50, 'dynamic');
@@ -204,6 +226,7 @@ function draw() {
 
     case 3:
       background(255);
+      player2.visable = false;
 
       // Clear branches group
       for (let i = branches.length - 1; i >= 0; i--) {
@@ -236,7 +259,7 @@ function draw() {
         gem.vel.x = direction.x * 0.5;
         gem.vel.y = direction.y * 0.5;
     
-        if (dist(mouseX, mouseY, gem.x, gem.y) < gem.width / 2) {
+        if (dist(mouseX, mouseY, gem.x, gem.y) < gem.width / 2 && stage === 3) {
           gem.remove();
           console.log("Gem collected");
           bugSound.play();
@@ -254,21 +277,31 @@ function draw() {
     
       // Draw all gems
       drawSprites(gems);
-      break;
-    
     // Define drawSprites function
     function drawSprites(group) {
       for (let sprite of group) {
         sprite.draw();
       }
     }
-      break;
+
+    timer++;
+  
+    // Switch to stage 4 after a specific time
+    if (timer > 300) { // Adjust timer value (300 frames is about 5 seconds)
+      stage = 4;
+      timer = 0; // Reset timer for stage 4
+    }
+    console.log(timer);
+    break;
 
     case 4:
-      // closing stage 
-      break;
+      background(250);
+      gems.visible = false;
+    animation(openEyesAni, width / 2, height / 2);
+    break;
 
-  }
+  
+}
 }
 
 function spawnBranch() {
