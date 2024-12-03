@@ -21,6 +21,7 @@ let fallSound;
 let collided = false; // Variable to track collision state
 let bug;
 let bugSound;
+let sleepButton;
 
 function preload() {
   branchImage = loadImage('assets/branch.png');
@@ -43,6 +44,12 @@ function setup() {
   character.color = color(255, 0, 0);
   character.vel.y = -2;
   character.friction = 0.5;
+
+  button = new Sprite(width / 2, height / 2, 100, 50); // x, y, width, height
+  button.color = 'blue'; // Set the color of the button
+  button.text = 'Click Me'; // Add text to the button
+  button.textColor = 'white';
+  button.textSize = 18;
 }
 
 function spawnEnemy() {
@@ -74,7 +81,17 @@ function spawnEnemy() {
 
 function draw() {
   switch (stage) {
-    case 0: // Drowning stage
+    case 0:
+      background(200);
+      // Check if the mouse is pressed on the button
+      if (button.mouse.pressing()) {
+        stage = 1
+      } else {
+        button.color = 'blue'; // Reset color
+        button.text = 'Go to Sleep';
+      }
+      break;
+    case 1: // Drowning stage
       background(ocean);
       character.vel.y += 0.1;
       if (character.y > height - 25) {
@@ -104,13 +121,13 @@ function draw() {
         }
       }
       if (mouseIsPressed) {
-        stage = 1;
+        stage = 2;
         startTime = millis();
         console.log("Transitioning to stage 1");
       }
       break;
 
-    case 1: // Falling stage with branches
+    case 2: // Falling stage with branches
       background(tree);
 
       if (!player2) {
@@ -168,11 +185,11 @@ function draw() {
       camera.y = player2.y;
 
       if (millis() - startTime > 10000) {
-        stage = 2;
+        stage = 3;
       }
       break;
 
-    case 2:
+    case 3:
       background(255);
 
       // Clear branches group
@@ -234,7 +251,7 @@ function draw() {
     }
       break;
 
-    case 3:
+    case 4:
       // closing stage 
       break;
 
