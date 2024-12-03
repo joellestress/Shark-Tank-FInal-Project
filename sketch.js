@@ -22,6 +22,7 @@ let collided = false; // Variable to track collision state
 let bug;
 let bugSound;
 let sleepButton;
+let openEyes;
 
 function preload() {
   branchImage = loadImage('assets/branch.png');
@@ -33,6 +34,7 @@ function preload() {
   fallSound = loadSound('assets/falling.mp3');
   bug = loadAnimation('assets/bug_0001.png', 'assets/bug_0013.png');
   bugSound = loadSound('assets/bugSound.mp3');
+  openEyes = loadImage('assets/openeyes.jpg');
 }
 
 function setup() {
@@ -45,9 +47,9 @@ function setup() {
   character.vel.y = -2;
   character.friction = 0.5;
 
-  button = new Sprite(width / 2, height / 2, 100, 50); // x, y, width, height
+  button = new Sprite(width / 2, height / 1.5, 200, 100); // x, y, width, height
   button.color = 'blue'; // Set the color of the button
-  button.text = 'Click Me'; // Add text to the button
+  button.text = 'Go to Sleep'; // Add text to the button
   button.textColor = 'white';
   button.textSize = 18;
 }
@@ -82,7 +84,11 @@ function spawnEnemy() {
 function draw() {
   switch (stage) {
     case 0:
-      background(200);
+    if (!startTime) {
+      startTime = millis(); // Set the start time when entering stage 1
+    }
+      background(openEyes);
+      character.visible = false; // Hide character in stage 0
       // Check if the mouse is pressed on the button
       if (button.mouse.pressing()) {
         stage = 1
@@ -93,6 +99,9 @@ function draw() {
       break;
     case 1: // Drowning stage
       background(ocean);
+      character.visible = true;
+      button.visible = false;
+
       character.vel.y += 0.1;
       if (character.y > height - 25) {
         character.y = height - 25;
@@ -120,10 +129,14 @@ function draw() {
           character.position.y += 5;
         }
       }
-      if (mouseIsPressed) {
-        stage = 2;
-        startTime = millis();
-        console.log("Transitioning to stage 1");
+
+      if (millis() - startTime > 10000) {
+        stage = 2; // Change to next stage
+        startTime = millis(); // Reset `startTime` for the next stage
+         // Hide all enemies
+         for (let enemy of enemies) {
+          enemy.visible = false;
+        }
       }
       break;
 
