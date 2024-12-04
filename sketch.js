@@ -100,7 +100,7 @@ function draw() {
         animation(closeEyesAni, width / 2, height / 2); // Play the closing eyes animation
         scale(2);
         console.log(closeEyesAni);
-        if (millis() - animationStartTime > 1000) { // Assuming the animation duration is 1 second
+        if (millis() - animationStartTime > 900) { // Assuming the animation duration is 1 second
           isClosingEyes = false;
           stage = 1; // Switch to the next stage after the animation finishes
           startTime = millis(); // Initialize startTime when switching to stage 1
@@ -232,6 +232,14 @@ function draw() {
       for (let i = branches.length - 1; i >= 0; i--) {
         branches[i].remove();
       }
+
+
+     // Draw a square in the middle of the screen
+      rectMode(CENTER); // Set rectangle mode to CENTER
+      fill(255, 0, 0); // red color
+      noStroke(); // No border
+      rect(width / 2, height / 2, 100, 100); // x, y, width, height
+  
     
       // Initialize gems if not already done
       if (!gems) {
@@ -297,7 +305,18 @@ function draw() {
     case 4:
       background("#0000FF");
       gems.visible = false;
-    animation(openEyesAni, width / 2, height / 2);
+      character.visable = false;
+      player2.visable = false;
+
+      // Display text
+      animation(openEyesAni, width / 2, height / 2);
+
+      fill(255); // Set text color to white
+      textSize(32); // Set text size
+      textAlign(CENTER, CENTER); // Center the text
+      text("Good morning! How did you sleep?", width / 2, height / 3); // Draw the text
+
+
     break;
 
   
