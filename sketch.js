@@ -151,7 +151,7 @@ function draw() {
         }
       }
 
-      if (millis() - startTime > 10000) {
+      if (millis() - startTime > 15000) {
         stage = 2; // Change to next stage
         startTime = millis(); // Reset `startTime` for the next stage
          // Hide all enemies
@@ -219,7 +219,7 @@ function draw() {
 
       camera.y = player2.y;
 
-      if (millis() - startTime > 10000) {
+      if (millis() - startTime > 15000) {
         stage = 3;
       }
       break;
@@ -287,7 +287,7 @@ function draw() {
     timer++;
   
     // Switch to stage 4 after a specific time
-    if (timer > 300) { // Adjust timer value (300 frames is about 5 seconds)
+    if (timer > 1000) { // Adjust timer value (300 frames is about 5 seconds)
       stage = 4;
       timer = 0; // Reset timer for stage 4
     }
@@ -295,7 +295,7 @@ function draw() {
     break;
 
     case 4:
-      background(250);
+      background("#0000FF");
       gems.visible = false;
     animation(openEyesAni, width / 2, height / 2);
     break;
